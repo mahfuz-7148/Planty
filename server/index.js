@@ -47,6 +47,7 @@ const client = new MongoClient(uri, {
 })
 async function run() {
     const plantsCollection = client.db('plantDB').collection('plants')
+    const ordersCollection = client.db('plantDB').collection('orders')
   try {
     // Generate jwt token
     app.post('/jwt', async (req, res) => {
@@ -113,6 +114,12 @@ async function run() {
               }
           })
           res.send({clientSecret: client_secret})
+      })
+
+      app.post('/order', async (req, res) => {
+          const orderData = req.body
+          const result = await ordersCollection.insertOne(orderData)
+          res.send(result)
       })
 
 

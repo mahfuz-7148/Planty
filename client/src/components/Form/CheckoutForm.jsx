@@ -78,10 +78,24 @@ export const CheckoutForm = ({totalPrice, closeModal, orderData}) => {
             return
         }
         if (result?.paymentIntent?.status === 'succeeded') {
+            orderData.transactionId = result?.paymentIntent?.id
+            try {
+                await axiosSecure.post('/order', orderData)
+                // console.log(data)
 
+            }
+            catch (e) {
+                console.log(e)
+
+            }
+            finally {
+                setProcessing(false)
+                setCardError(null)
+                closeModal()
+            }
         }
 
-      };
+    };
   return (
     <form onSubmit={handleSubmit}>
     <CardElement
