@@ -3,6 +3,7 @@ import './checkoutForm.css'
 import {useEffect, useState} from 'react';
 import {BounceLoader} from 'react-spinners'
 import useAxiosSecure from '../../hooks/useAxiosSecure.jsx';
+import useAuth from '../../hooks/useAuth.js';
 
 
 export const CheckoutForm = ({totalPrice, closeModal, orderData}) => {
@@ -12,6 +13,7 @@ export const CheckoutForm = ({totalPrice, closeModal, orderData}) => {
     const [processing, setProcessing] = useState(false);
     const axiosSecure = useAxiosSecure()
     const [clientSecret, setClientSecret] = useState('')
+    const { user } = useAuth();
 
     useEffect(() => {
         const getClientSecret = async () => {
@@ -19,8 +21,9 @@ export const CheckoutForm = ({totalPrice, closeModal, orderData}) => {
                 quantity: orderData?.quantity,
                 plantId: orderData?.plantId,
             })
-
+            setClientSecret(data?.clientSecret)
         }
+
         getClientSecret()
     }, [axiosSecure, orderData]);
 
@@ -60,6 +63,25 @@ export const CheckoutForm = ({totalPrice, closeModal, orderData}) => {
           setCardError(null)
         }
 
+        const result = await stripe.confirmCardPayment(clientSecret, {
+            payment_method: {
+                card,
+                billing_details: {
+                    name: user?.displayName,
+                    email: user?.email
+                },
+                
+            }
+        })
+
+
+        if (result?.error) {
+            setCardError(result?.error?.message)
+            return
+        }
+        if (result?.paymentIntent?.status === 'succeeded') {
+
+        }
 
       };
   return (
