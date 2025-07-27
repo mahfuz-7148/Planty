@@ -70,10 +70,8 @@ export const CheckoutForm = ({totalPrice, closeModal, orderData}) => {
                     name: user?.displayName,
                     email: user?.email
                 },
-                
             }
         })
-
 
         if (result?.error) {
             setCardError(result?.error?.message)
