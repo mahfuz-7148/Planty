@@ -1,10 +1,13 @@
-require('dotenv').config()
-const express = require('express')
-const cors = require('cors')
-const cookieParser = require('cookie-parser')
-const { MongoClient, ServerApiVersion, ObjectId} = require('mongodb')
-const jwt = require('jsonwebtoken')
+import dotenv from 'dotenv'
+import express from 'express'
+import cors from 'cors'
+import cookieParser from 'cookie-parser'
+import Stripe from 'stripe'
+import { MongoClient, ServerApiVersion, ObjectId } from 'mongodb'
+import jwt from 'jsonwebtoken'
 
+dotenv.config()
+const stripe = Stripe(process.env.STRIPE_SK_KEY)
 const port = process.env.PORT || 3000
 const app = express()
 // middleware
@@ -14,7 +17,6 @@ const corsOptions = {
   optionSuccessStatus: 200,
 }
 app.use(cors(corsOptions))
-
 app.use(express.json())
 app.use(cookieParser())
 
@@ -93,6 +95,24 @@ async function run() {
               _id: new ObjectId(id),
           })
           res.send(result)
+      })
+
+      app.post('/create-payment-intent', async (req, res) => {
+        const {plantId, quantity} = req.body
+          // console.log(plantId, quantity)
+          const plant = await plantsCollection.findOne({
+              _id: new ObjectId(plantId)
+          })
+          if (!plant) return res.status(404).send({message: 'plant not found'})
+          const totalPrice = quantity * plant?.price * 100
+          const {client_secret} = await stripe.paymentIntents.create({
+              amount: totalPrice,
+              currency: 'usd',
+              automatic_payment_methods: {
+                  enabled: true
+              }
+          })
+          res.send({clientSecret: client_secret})
       })
 
 

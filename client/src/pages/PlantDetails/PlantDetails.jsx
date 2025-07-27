@@ -4,12 +4,15 @@ import Button from '../../components/Shared/Button/Button'
 import PurchaseModal from '../../components/Modal/PurchaseModal'
 import { useState } from 'react'
 import {useLoaderData} from 'react-router';
+import useAuth from '../../hooks/useAuth'
 
 const PlantDetails = () => {
   const plant = useLoaderData()
+  const {user} = useAuth()
   const { name, description, category, quantity, price, _id, seller, image } =
   plant || {}
   const [isOpen, setIsOpen] = useState(false)
+
 
   const closeModal = () => {
     setIsOpen(false)
@@ -19,6 +22,7 @@ const PlantDetails = () => {
     <Container>
       <div className='mx-auto flex flex-col lg:flex-row justify-between w-full gap-12'>
         {/* Header */}
+
         <div className='flex flex-col gap-6 flex-1'>
           <div>
             <div className='w-full overflow-hidden rounded-xl'>
@@ -79,12 +83,12 @@ const PlantDetails = () => {
           <div className='flex justify-between'>
             <p className='font-bold text-3xl text-gray-500'>Price: {price}$</p>
             <div>
-              <Button onClick={() => setIsOpen(true)} label='Purchase' />
+              <Button disabled={!user} onClick={() => setIsOpen(true)} label='Purchase' />
             </div>
           </div>
           <hr className='my-6' />
 
-          <PurchaseModal closeModal={closeModal} isOpen={isOpen} />
+          <PurchaseModal plant={plant} closeModal={closeModal} isOpen={isOpen} />
         </div>
       </div>
     </Container>
