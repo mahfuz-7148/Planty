@@ -4,6 +4,7 @@ import {useEffect, useState} from 'react';
 import {BounceLoader} from 'react-spinners'
 import useAxiosSecure from '../../hooks/useAxiosSecure.jsx';
 import useAuth from '../../hooks/useAuth.js';
+import toast from 'react-hot-toast';
 
 
 export const CheckoutForm = ({totalPrice, closeModal, orderData}) => {
@@ -80,8 +81,16 @@ export const CheckoutForm = ({totalPrice, closeModal, orderData}) => {
         if (result?.paymentIntent?.status === 'succeeded') {
             orderData.transactionId = result?.paymentIntent?.id
             try {
-                await axiosSecure.post('/order', orderData)
+               const {data} = await axiosSecure.post('/order', orderData)
                 // console.log(data)
+                if (data?.insertedId) {
+                    toast.success('order placed successfully')
+                }
+                const {data: result } = await axiosSecure.patch(`/quantity-update/${orderData?.plantId}`, {
+                    quantityToUpdate: orderData?.quantity,
+                    status: 'decrease'
+                })
+                console.log(result)
 
             }
             catch (e) {
