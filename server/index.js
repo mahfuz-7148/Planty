@@ -147,6 +147,12 @@ async function run() {
           res.send(result)
       })
 
+      app.get('/user/role/:email', async (req, res) => {
+          const email = req.params.email
+          const result = await usersCollection.findOne({email})
+          if (!result) return res.status(404).send({ message: 'User Not Found.' })
+          res.send({role: result?.role})
+      })
 
     // Send a ping to confirm a successful connection
     // await client.db('admin').command({ ping: 1 })
