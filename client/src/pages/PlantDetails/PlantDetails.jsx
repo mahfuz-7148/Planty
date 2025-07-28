@@ -83,7 +83,7 @@ const PlantDetails = () => {
           <div className='flex justify-between'>
             <p className='font-bold text-3xl text-gray-500'>Price: {price}$</p>
             <div>
-              <Button disabled={!user} onClick={() => setIsOpen(true)} label='Purchase' />
+              <Button disabled={!user || user?.email === seller?.email} onClick={() => setIsOpen(true)} label='Purchase' />
             </div>
           </div>
           <hr className='my-6' />

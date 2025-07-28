@@ -48,6 +48,7 @@ const client = new MongoClient(uri, {
 async function run() {
     const plantsCollection = client.db('plantDB').collection('plants')
     const ordersCollection = client.db('plantDB').collection('orders')
+    const usersCollection = client.db('plantDB').collection('users')
   try {
     // Generate jwt token
     app.post('/jwt', async (req, res) => {
@@ -119,6 +120,30 @@ async function run() {
       app.post('/order', async (req, res) => {
           const orderData = req.body
           const result = await ordersCollection.insertOne(orderData)
+          res.send(result)
+      })
+
+      app.post('/user', async (req, res) => {
+          const userData = req.body
+          userData.role = 'customer'
+          userData.created_at = new Date().toISOString()
+          userData.last_loggedIn = new Date().toISOString()
+          const query = {
+              email: userData?.email
+          }
+          const alreadyExists = await usersCollection.findOne(query)
+          // console.log(alreadyExists)
+          // console.log(!!alreadyExists)
+          if (!!alreadyExists) {
+              const result = await usersCollection.updateOne(query, {
+                  $set: {
+                      last_loggedIn: new Date().toISOString()
+                  },
+              })
+              return res.send(result)
+          }
+
+          const result = await usersCollection.insertOne(userData)
           res.send(result)
       })
 
