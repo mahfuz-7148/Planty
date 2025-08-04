@@ -7,7 +7,7 @@ import useAuth from '../../hooks/useAuth.js';
 import toast from 'react-hot-toast';
 
 
-export const CheckoutForm = ({totalPrice, closeModal, orderData}) => {
+export const CheckoutForm = ({totalPrice, closeModal, orderData, refetch}) => {
     const stripe = useStripe();
     const elements = useElements();
     const [cardError, setCardError] = useState(null);
@@ -91,6 +91,7 @@ export const CheckoutForm = ({totalPrice, closeModal, orderData}) => {
                     status: 'decrease'
                 })
                 console.log(result)
+                refetch()
 
             }
             catch (e) {

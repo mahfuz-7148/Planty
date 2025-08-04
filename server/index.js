@@ -35,6 +35,7 @@ const verifyToken = async (req, res, next) => {
     next()
   })
 }
+// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@ema-john.ftku5dr.mongodb.net/?retryWrites=true&w=majority&appName=ema-john`;
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@ema-john.ftku5dr.mongodb.net/?retryWrites=true&w=majority&appName=ema-john`;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 

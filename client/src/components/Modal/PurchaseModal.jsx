@@ -7,7 +7,7 @@ import { CheckoutForm } from "../Form/CheckoutForm";
 import { loadStripe } from "@stripe/stripe-js";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK_KEY)
-const PurchaseModal = ({ closeModal, isOpen, plant }) => {
+const PurchaseModal = ({ closeModal, isOpen, plant, refetch }) => {
   // console.log(plant)
   // Total Price Calculation
   const { user } = useAuth();
@@ -48,9 +48,9 @@ const PurchaseModal = ({ closeModal, isOpen, plant }) => {
 
   };
 
-  const handleOrder = () => {
-    console.log(orderData)
-  }
+  // const handleOrder = () => {
+  //   console.log(orderData)
+  // }
   return (
     <Dialog
       open={isOpen}
@@ -113,6 +113,7 @@ const PurchaseModal = ({ closeModal, isOpen, plant }) => {
                   totalPrice={totalPrice}
                   closeModal={closeModal}
                   orderData={orderData}
+                  refetch={refetch}
               />
             </Elements>
 
