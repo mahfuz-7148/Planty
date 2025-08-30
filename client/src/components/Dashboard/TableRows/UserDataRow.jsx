@@ -1,14 +1,17 @@
-const UserDataRow = () => {
-  return (
+const UserDataRow = ({user}) => {
+    const { email, role, status } = user
+    // console.log(user)
+
+    return (
     <tr>
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 whitespace-no-wrap'>abc@gmail.com</p>
+        <p className='text-gray-900 whitespace-no-wrap'>{email}</p>
       </td>
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 whitespace-no-wrap'>Customer</p>
+        <p className='text-gray-900 whitespace-no-wrap'>{role}</p>
       </td>
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-red-500 whitespace-no-wrap'>Unavailable</p>
+        <p className='text-red-500 whitespace-no-wrap'>{status ? status : 'Unavailable'}</p>
       </td>
 
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
