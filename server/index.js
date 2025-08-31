@@ -161,10 +161,33 @@ async function run() {
           res.send(result)
       })
 
-      app.get('/all-users', async (req, res) => {
-          const result = await usersCollection.find().toArray()
+      app.get('/all-users', verifyToken, async (req, res) => {
+        // console.log(req.user)
+        const filter = {
+            email: {
+              $ne: req?.user?.email
+            }
+          }
+          const result = await usersCollection.find(filter).toArray()
           res.send(result)
       })
+
+    app.patch('/user/role/update/:email', async (req, res) => {
+      const email = req.params.email
+      const {role} = req.body
+      // console.log(role)
+      const filter = {
+        email: email
+      }
+      const updateDoc = {
+        $set: {
+          role,
+          status: 'verified'
+        }
+      }
+      const result = await usersCollection.updateOne(filter, updateDoc)
+      res.send(result)
+    })
 
       app.get('/user/role/:email', async (req, res) => {
           const email = req.params.email
