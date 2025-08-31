@@ -1,11 +1,13 @@
 import { Button, Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import useAxiosSecure from '../../hooks/useAxiosSecure.jsx';
-import {useMutation} from '@tanstack/react-query';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {useState} from 'react';
+import toast from 'react-hot-toast';
 
 export default function UpdateUserRoleModal({isOpen, setIsOpen, email, role}) {
 	const axiosSecure = useAxiosSecure()
 	const [updateRole, setUpdateRole] = useState(role)
+	const queryClient = useQueryClient()
 	function close() {
 		setIsOpen(false)
 	}
@@ -16,8 +18,13 @@ export default function UpdateUserRoleModal({isOpen, setIsOpen, email, role}) {
 			})
 			return data
 		},
-		onSuccess: data => {
-			console.log(data)
+		onSuccess: () => {
+			toast.success('updated role')
+			close()
+			queryClient.invalidateQueries(['users'])
+		},
+		onError: error => {
+			console.log(error)
 		}
 	})
 
@@ -27,7 +34,6 @@ export default function UpdateUserRoleModal({isOpen, setIsOpen, email, role}) {
 	}
 	return (
 		<>
-
 			<Dialog open={isOpen} as="div" className="relative z-10 focus:outline-none" onClose={close} __demoMode>
 				<div className="fixed inset-0 z-10 w-screen overflow-y-auto">
 					<div className="flex min-h-full items-center justify-center p-4">
