@@ -1,10 +1,33 @@
 import { Dialog, DialogTitle, DialogPanel } from '@headlessui/react'
+import useAuth from '../../hooks/useAuth.js';
+import {useMutation} from '@tanstack/react-query';
+import toast from 'react-hot-toast';
+import useAxiosSecure from '../../hooks/useAxiosSecure.jsx';
 const BecomeSellerModal = ({ closeModal, isOpen }) => {
+  const {user} = useAuth()
+  const axiosSecure = useAxiosSecure()
+
+  const {mutate} = useMutation({
+    mutationFn: async () => {
+      const {data} = await axiosSecure.patch(`/become-seller-request/${user?.email}`)
+      return data
+    },
+    onSuccess: () => {
+      toast.success('request successfully')
+      closeModal(
+      )
+    },
+    onError: (error)=>{
+      console.log(error)
+    }
+  })
+  // console.log(mutation)
+
   return (
     <Dialog
       open={isOpen}
       as='div'
-      className='relative z-10 focus:outline-none '
+      className='relative z-10 focus:outline-none'
       onClose={close}
     >
       <div className='fixed inset-0 z-10 w-screen overflow-y-auto'>
@@ -27,6 +50,7 @@ const BecomeSellerModal = ({ closeModal, isOpen }) => {
             <hr className='mt-8 ' />
             <div className='flex mt-2 justify-around'>
               <button
+                onClick={mutate}
                 type='button'
                 className='inline-flex justify-center rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2'
               >
