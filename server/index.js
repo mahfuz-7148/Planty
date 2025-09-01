@@ -207,7 +207,38 @@ async function run() {
       const totalUser = await usersCollection.estimatedDocumentCount()
       const totalPlant = await plantsCollection.estimatedDocumentCount()
       const totalOrder = await ordersCollection.estimatedDocumentCount()
-      res.send({totalUser, totalPlant, totalOrder})
+      const pipeline = [
+        {
+          $addFields: {
+            createdAt: {
+              $toDate: '$_id'
+            }
+          }
+        },
+        {
+          $group: {
+            _id: {
+              $dateToString: {
+                format: '%d-%m-%Y',
+                date: '$createdAt'
+              }
+            },
+            revenue: {
+              $sum: '$price'
+            },
+            order: {
+              $sum: 1
+            }
+          }
+        }
+      ]
+
+      const result = await ordersCollection.aggregate(pipeline).toArray()
+      const barChartData = result.map(data => (
+        {data: data._id, revenue: data.revenue, order: data.order}
+      ))
+      const totalRevenue = result.reduce((sum, data) => sum + data?.revenue, 0)
+      res.send({barChartData, totalUser, totalPlant, totalOrder, totalRevenue})
     })
 
       app.get('/user/role/:email', async (req, res) => {
