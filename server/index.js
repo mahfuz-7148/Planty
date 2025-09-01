@@ -203,6 +203,13 @@ async function run() {
       res.send(result)
     })
 
+    app.get('/admin-stats', async (req, res) => {
+      const totalUser = await usersCollection.estimatedDocumentCount()
+      const totalPlant = await plantsCollection.estimatedDocumentCount()
+      const totalOrder = await ordersCollection.estimatedDocumentCount()
+      res.send({totalUser, totalPlant, totalOrder})
+    })
+
       app.get('/user/role/:email', async (req, res) => {
           const email = req.params.email
           const result = await usersCollection.findOne({email})

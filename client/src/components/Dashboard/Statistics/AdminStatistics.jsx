@@ -1,7 +1,21 @@
 import { FaUserAlt, FaDollarSign } from 'react-icons/fa'
 import { BsFillCartPlusFill, BsFillHouseDoorFill } from 'react-icons/bs'
+import useAxiosSecure from '../../../hooks/useAxiosSecure.jsx';
+import {useQuery} from '@tanstack/react-query';
+import LoadingSpinner from '../../Shared/LoadingSpinner.jsx';
 
 const AdminStatistics = () => {
+  const axiosSecure = useAxiosSecure()
+  const {data: stats, isLoading} = useQuery({
+    queryKey: ['admin-stats'],
+    queryFn: async () => {
+      const {data} = await axiosSecure.get('/admin-stats')
+      return data
+    }
+  })
+  console.log(stats)
+
+  if (isLoading) return <LoadingSpinner />
   return (
     <div>
       <div className='mt-12'>
